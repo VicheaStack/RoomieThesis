@@ -1,0 +1,10 @@
+package org.roomrental.group.RoomieHub.dto;
+
+import java.time.LocalDateTime;
+
+public record FavoriteResponseDTO(
+        Long renterId,
+        Long roomId,
+        LocalDateTime createdAt
+) {
+}
