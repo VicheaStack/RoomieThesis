@@ -1,0 +1,7 @@
+package org.roomrental.group.RoomieHub.repository;
+
+import org.roomrental.group.RoomieHub.entity.Photo;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PhotoRepository extends JpaRepository<Photo, Long> {
+}

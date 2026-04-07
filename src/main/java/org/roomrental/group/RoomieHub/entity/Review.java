@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Review {
 
     @Id
@@ -42,15 +41,12 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String ownerResponse;
 
-    @Builder.Default
     private Boolean isVerified = false;
 
-    @Builder.Default
     private Boolean isFlagged = false;
 
     private String flagReason;
 
-    @Builder.Default
     private Integer helpfulCount = 0;
 
     @CreationTimestamp
