@@ -1,4 +1,4 @@
 package org.roomrental.group.RoomieHub.serviceImpl;
 
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 }

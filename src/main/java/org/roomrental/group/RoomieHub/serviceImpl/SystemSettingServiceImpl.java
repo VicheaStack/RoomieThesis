@@ -1,4 +1,6 @@
 package org.roomrental.group.RoomieHub.serviceImpl;
 
-public class SystemSettingServiceImpl {
+import org.roomrental.group.RoomieHub.service.SystemSettingService;
+
+public class SystemSettingServiceImpl implements SystemSettingService {
 }
