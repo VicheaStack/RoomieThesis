@@ -1,14 +1,28 @@
 package org.roomrental.group.RoomieHub.serviceImpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.roomrental.group.RoomieHub.entity.OwnerProfile;
+import org.roomrental.group.RoomieHub.repository.OwnerProfileRepository;
 import org.roomrental.group.RoomieHub.service.OwnerProfileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
+@Transactional
 public class OwnerProfileServiceImpl implements OwnerProfileService {
+
+    private final OwnerProfileRepository ownerProfileRepository;
+
+    public OwnerProfileServiceImpl(OwnerProfileRepository ownerProfileRepository) {
+        this.ownerProfileRepository = ownerProfileRepository;
+    }
+
     @Override
     public OwnerProfile create(OwnerProfile ownerProfile) {
-        return null;
+        OwnerProfile save = ownerProfileRepository.save(ownerProfile);
+        log.info("OwnerProfile created: {}", save);
+        return save;
     }
 
     @Override
