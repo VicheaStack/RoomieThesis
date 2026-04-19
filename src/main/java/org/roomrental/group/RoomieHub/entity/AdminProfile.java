@@ -2,9 +2,11 @@ package org.roomrental.group.RoomieHub.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Array;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,10 +19,10 @@ public class AdminProfile {
 
     @Id
     @Column(name = "admin_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long adminId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
     @JoinColumn(name = "admin_id")
     private User user;
 
@@ -29,7 +31,7 @@ public class AdminProfile {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private List<UserRole> permissions = List.of();
+    private List<UserRole> permissions = new ArrayList<>();
 
     private LocalDateTime lastLogin;
 }

@@ -14,6 +14,7 @@ public class OwnerProfile {
 
     @Id
     @Column(name = "owner_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ownerId;
 
     @OneToOne(fetch = FetchType.LAZY)
