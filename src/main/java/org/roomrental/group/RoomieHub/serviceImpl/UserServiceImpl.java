@@ -1,28 +1,73 @@
 package org.roomrental.group.RoomieHub.serviceImpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.roomrental.group.RoomieHub.entity.User;
+import org.roomrental.group.RoomieHub.repository.RoomRepository;
+import org.roomrental.group.RoomieHub.repository.UserRepository;
 import org.roomrental.group.RoomieHub.service.UserService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
+@Transactional
+@Slf4j
+@Service
 public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(RoomRepository roomRepository,
+                           UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public User create(User user) {
-        return null;
+
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new RuntimeException("User with email " + user.getEmail() + " already exists");
+        }
+
+        if(userRepository.existsByPhoneNumber(user.getPhoneNumber())){
+            throw new RuntimeException("User with phone number " + user.getPhoneNumber() + " already exists");
+        }
+
+        User save = userRepository.save(user);
+        log.debug("User created: {}", save);
+        return save;
     }
 
+    @Transactional
     @Override
     public User updateUser(Long id, User user) {
-        return null;
+        User update = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
+
+        update.setEmail(user.getEmail());
+        update.setPhoneNumber(user.getPhoneNumber());
+        update.setPasswordHash(user.getPasswordHash());
+        update.setFullName(user.getFullName());
+        update.setProfilePhotoUrl(user.getProfilePhotoUrl());
+
+        User save = userRepository.save(update);
+        log.debug("User updated: {}", save);
+
+        return save;
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Optional<User> findById(Long id) {
-        return Optional.empty();
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
-
+        if(!userRepository.existsById(id)){
+            throw new RuntimeException("User with id " + id + " not found");
+        }
+        log.debug("User deleted: {}", id);
+        userRepository.deleteById(id);
     }
 }

@@ -26,5 +26,8 @@ public class OwnerProfile {
     private Integer totalListings = 0;
 
     @Builder.Default
-    private Double averageRating = 0.0;
+    private Integer ratingCount = 0;
+
+    @Builder.Default
+    private Double totalRating = 0.0;
 }
