@@ -8,5 +8,5 @@ import org.springframework.stereotype.Service;
 public interface ReviewService {
 
     Review create(Review review);
-    Review update(Long id, Review review);
+    Review update(Review review, Long id);
 }

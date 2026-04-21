@@ -78,4 +78,5 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "room_id")
     )
     private List<Room> favoriteRooms = new ArrayList<>();
+
 }
