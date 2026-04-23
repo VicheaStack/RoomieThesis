@@ -68,6 +68,9 @@ public class User {
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     private List<Message> sentMessages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "receiver")
+    private List<Message> receivedMessages = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Notification> notifications = new ArrayList<>();
 
@@ -78,4 +81,5 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "room_id")
     )
     private List<Room> favoriteRooms = new ArrayList<>();
+
 }

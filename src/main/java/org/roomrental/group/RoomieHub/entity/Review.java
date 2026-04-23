@@ -1,13 +1,34 @@
 package org.roomrental.group.RoomieHub.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
-@Table(name = "reviews")
+@Table(name = "reviews", indexes = {
+        @Index(name = "idx_room", columnList = "room_id"),
+        @Index(name = "idx_renter", columnList = "renter_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,6 +51,8 @@ public class Review {
     @JoinColumn(name = "booking_id", nullable = false, unique = true)
     private Booking booking;
 
+    @Min(1)
+    @Max(5)
     @Column(nullable = false)
     private Integer rating;
 
@@ -41,12 +64,15 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String ownerResponse;
 
+    @Builder.Default
     private Boolean isVerified = false;
 
+    @Builder.Default
     private Boolean isFlagged = false;
 
     private String flagReason;
 
+    @Builder.Default
     private Integer helpfulCount = 0;
 
     @CreationTimestamp
