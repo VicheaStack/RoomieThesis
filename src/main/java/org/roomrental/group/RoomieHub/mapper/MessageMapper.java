@@ -8,7 +8,6 @@ import org.roomrental.group.RoomieHub.entity.Message;
 @Mapper(componentModel = "spring")
 public interface MessageMapper {
 
-    @Mapping(source = "booking.bookingId", target = "bookingId")
     @Mapping(source = "sender.userId", target = "senderId")
     MessageResponseDTO toDTO(Message message);
 }
