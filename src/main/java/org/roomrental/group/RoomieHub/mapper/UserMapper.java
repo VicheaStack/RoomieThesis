@@ -29,6 +29,7 @@ public interface UserMapper {
     @Mapping(target = "sentMessages", ignore = true)
     @Mapping(target = "notifications", ignore = true)
     @Mapping(target = "favoriteRooms", ignore = true)
+    @Mapping(target = "receivedMessages", ignore = true)
     User toEntity(UserRequestDTO dto);
 
     // Helper method

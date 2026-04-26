@@ -25,7 +25,7 @@ public class OwnerProfileServiceImpl implements OwnerProfileService {
         OwnerProfile owner = ownerProfileRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("OwnerProfile not found"));
 
-        owner.setTotalListings(owner.getTotalListings() + 1);
+        owner.setRatingCount(owner.getRatingCount() + 1);
         owner.setTotalRating(owner.getTotalRating() + newRating);
 
         OwnerProfile save = ownerProfileRepository.save(owner);
