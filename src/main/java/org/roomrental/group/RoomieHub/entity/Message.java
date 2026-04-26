@@ -18,13 +18,13 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Table(name = "messages")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Message {
 
     @Id
@@ -42,8 +42,10 @@ public class Message {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String messageText;
 
+    @Builder.Default
     private Boolean isRead = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
 }

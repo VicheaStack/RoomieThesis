@@ -4,6 +4,7 @@ public record OwnerProfileResponseDTO(
         Long ownerId,
         Long userId,
         Integer totalListings,
-        Double averageRating
+        Integer ratingCount,
+        Double totalRating
 ) {
 }
