@@ -1,6 +1,9 @@
 package org.roomrental.group.RoomieHub.controller;
 
+import org.roomrental.group.RoomieHub.dto.SystemSettingRequestDTO;
+import org.roomrental.group.RoomieHub.dto.SystemSettingResponseDTO;
 import org.roomrental.group.RoomieHub.entity.SystemSetting;
+import org.roomrental.group.RoomieHub.mapper.SystemSettingMapper;
 import org.roomrental.group.RoomieHub.service.SystemSettingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class SystemSettingController {
 
     private final SystemSettingService systemSettingService;
+    private final SystemSettingMapper systemSettingMapper;
 
-    public SystemSettingController(SystemSettingService systemSettingService) {
+    public SystemSettingController(SystemSettingService systemSettingService,
+                                   SystemSettingMapper systemSettingMapper) {
         this.systemSettingService = systemSettingService;
+        this.systemSettingMapper = systemSettingMapper;
     }
 
     @GetMapping("/{key}/string")
@@ -37,18 +43,32 @@ public class SystemSettingController {
     }
 
     @PostMapping
-    public ResponseEntity<SystemSetting> create(@RequestBody SystemSetting setting) {
-        SystemSetting created = systemSettingService.create(setting);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<SystemSettingResponseDTO> create(
+            @RequestBody SystemSettingRequestDTO dto) {
+
+        SystemSetting entity = systemSettingMapper.toEntity(dto);
+
+        SystemSetting created = systemSettingService.create(entity);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(systemSettingMapper.toDto(created));
     }
 
     @PutMapping("/{key}")
-    public ResponseEntity<SystemSetting> update(
+    public ResponseEntity<SystemSettingResponseDTO> update(
             @PathVariable String key,
             @RequestBody UpdateSettingRequest request) {
-        SystemSetting updated = systemSettingService.update(key, request.getValue(), request.getUserId());
-        return ResponseEntity.ok(updated);
+
+        SystemSetting updated = systemSettingService.update(
+                key,
+                request.getValue(),
+                request.getUserId()
+        );
+
+        return ResponseEntity.ok(systemSettingMapper.toDto(updated));
     }
+
 
     static class UpdateSettingRequest {
         private String value;
@@ -56,6 +76,7 @@ public class SystemSettingController {
 
         public String getValue() { return value; }
         public void setValue(String value) { this.value = value; }
+
         public Long getUserId() { return userId; }
         public void setUserId(Long userId) { this.userId = userId; }
     }

@@ -1,6 +1,9 @@
 package org.roomrental.group.RoomieHub.controller;
 
+import org.roomrental.group.RoomieHub.dto.UserRequestDTO;
+import org.roomrental.group.RoomieHub.dto.UserResponseDTO;
 import org.roomrental.group.RoomieHub.entity.User;
+import org.roomrental.group.RoomieHub.mapper.UserMapper;
 import org.roomrental.group.RoomieHub.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,30 +14,38 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     // Create a new user
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        User created = userService.create(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO userRequestDTO) {
+        User entity = userMapper.toEntity(userRequestDTO);
+        User created = userService.create(entity);
+        UserResponseDTO dto = userMapper.toDTO(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     // Get a user by ID
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
         User user = userService.findById(id);
+        userMapper.toDTO(user);
         return ResponseEntity.ok(user);
     }
 
     // Update an existing user
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updated = userService.updateUser(id, user);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @RequestBody UserRequestDTO userRequestDTO) {
+        User entity = userMapper.toEntity(userRequestDTO);
+        User updated = userService.updateUser(id, entity);
+        UserResponseDTO dto = userMapper.toDTO(updated);
+        return ResponseEntity.ok(dto);
     }
 
     // Delete a user by ID

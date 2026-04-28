@@ -21,52 +21,46 @@ public class OwnerProfileServiceImpl implements OwnerProfileService {
     }
 
     @Override
-    public OwnerProfile addRate(Long ownerId, double newRating) {
-        OwnerProfile owner = ownerProfileRepository.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("OwnerProfile not found"));
+    @Transactional
+    public OwnerProfile addRate(Long userId, double newRating) {
+        OwnerProfile owner = ownerProfileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("OwnerProfile not found for user: " + userId));
 
         owner.setRatingCount(owner.getRatingCount() + 1);
         owner.setTotalRating(owner.getTotalRating() + newRating);
 
-        OwnerProfile save = ownerProfileRepository.save(owner);
-        log.info("Saved OwnerProfile {}", save);
-        return save;
+        log.info("Updated rating for user {}. New rating count: {}", userId, owner.getRatingCount());
+        return ownerProfileRepository.save(owner);
     }
 
+    @Override
     @Transactional
-    @Override
-    public OwnerProfile update(OwnerProfile ownerProfile, Long id) {
-        OwnerProfile ownerProfileNotFound = ownerProfileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OwnerProfile not found"));
-
-        ownerProfileNotFound.setTotalListings(ownerProfile.getTotalListings());
-
-        OwnerProfile save = ownerProfileRepository.save(ownerProfileNotFound);
-        log.info("OwnerProfile updated: {}", save);
-        return save;
+    public OwnerProfile update(OwnerProfile ownerProfile, Long userId) {
+        return ownerProfileRepository.findById(userId)
+                .map(existing -> {
+                    existing.setTotalListings(ownerProfile.getTotalListings());
+                    return ownerProfileRepository.save(existing);
+                })
+                .orElseThrow(() -> new RuntimeException("OwnerProfile not found for user: " + userId));
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public OwnerProfile findById(Long id) {
-        return ownerProfileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OwnerProfile not found"));
+    public OwnerProfile findById(Long userId) {
+        return ownerProfileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("OwnerProfile not found for user: " + userId));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Page<OwnerProfile> findAll(Pageable pageable) {
-        log.info("Finding all OwnerProfiles {}, {} ",
-                pageable.getPageNumber(), pageable.getPageSize());
         return ownerProfileRepository.findAll(pageable);
     }
 
     @Override
-    public void deleteById(Long id) {
-        if(!ownerProfileRepository.existsById(id)) {
+    @Transactional
+    public void deleteById(Long userId) {
+        if (!ownerProfileRepository.existsById(userId)) {
             throw new RuntimeException("OwnerProfile not found");
         }
-        log.info("Deleting OwnerProfile {}", id);
-        ownerProfileRepository.deleteById(id);
+        ownerProfileRepository.deleteById(userId);
     }
 }

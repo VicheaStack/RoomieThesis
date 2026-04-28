@@ -3,9 +3,9 @@ spring:
     name: roomiehub
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/roomiehub}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:password}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/RoomieHub}
+    username: ${DB_USERNAME:phoneshop_night}
+    password: ${DB_PASSWORD:vichea123}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -18,7 +18,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     baseline-on-migrate: true
 
@@ -29,11 +29,20 @@ spring:
       password: ${REDIS_PASSWORD:}
       database: ${REDIS_DB:0}
 
-# ✅ CDN CONFIG (add here)
+# CDN Config (Cloudinary) – replace with your actual credentials
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-key: ${CLOUDINARY_API_KEY}
-  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:default}
+  api-key: ${CLOUDINARY_API_KEY:default}
+  api-secret: ${CLOUDINARY_API_SECRET:default}
+# OpenAPI / Swagger UI configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html          # default
+    tags-sorter: alpha               # sort endpoints alphabetically
+    operations-sorter: method        # sort operations by HTTP method
+    enabled: true
+  api-docs:
+    enabled: true
 
 server:
   port: ${SERVER_PORT:8088}

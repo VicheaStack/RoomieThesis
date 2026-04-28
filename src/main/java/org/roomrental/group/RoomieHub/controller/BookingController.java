@@ -6,19 +6,12 @@ import org.roomrental.group.RoomieHub.entity.Booking;
 import org.roomrental.group.RoomieHub.mapper.BookingMapper;
 import org.roomrental.group.RoomieHub.service.BookingService;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/AuditLog")
+@RequestMapping("/api/v1/bookings")   // use lower-case, plural for REST
 public class BookingController {
 
     private final BookingMapper bookingMapper;
@@ -30,38 +23,41 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
+    // Create a new booking
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody BookingRequestDTO bookingRequestDTO){
-        Booking entity = bookingMapper.toEntity(bookingRequestDTO);
+    public ResponseEntity<BookingResponseDTO> create(@RequestBody BookingRequestDTO dto) {
+        Booking entity = bookingMapper.toEntity(dto);
         Booking booking = bookingService.create(entity);
-        BookingResponseDTO dto = bookingMapper.toDTO(booking);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
 
-    @GetMapping
-    public ResponseEntity<?> update(@RequestBody BookingRequestDTO bookingRequestDTO, @PathVariable Long id){
-        Booking entity = bookingMapper.toEntity(bookingRequestDTO);
-        Booking update = bookingService.update(entity, id);
-        BookingResponseDTO dto = bookingMapper.toDTO(update);
-        return ResponseEntity.ok(dto);
+    // Update an existing booking
+    @PutMapping("/{id}")
+    public ResponseEntity<BookingResponseDTO> update(@PathVariable Long id,
+                                                     @RequestBody BookingRequestDTO dto) {
+        Booking entity = bookingMapper.toEntity(dto);
+        Booking updated = bookingService.update(entity, id);
+        return ResponseEntity.ok(bookingMapper.toDTO(updated));
     }
 
-    @GetMapping
-    public ResponseEntity<?> findById(@PathVariable Long id){
-        Booking update = bookingService.findById(id);
-        BookingResponseDTO dto = bookingMapper.toDTO(update);
-        return ResponseEntity.ok(dto);
+    // Get a booking by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<BookingResponseDTO> findById(@PathVariable Long id) {
+        Booking booking = bookingService.findById(id);
+        return ResponseEntity.ok(bookingMapper.toDTO(booking));
     }
 
+    // Get all bookings (with pagination)
     @GetMapping
-    public ResponseEntity<?> findAll(Pageable pageable){
-        Page<BookingResponseDTO> map = bookingService.findAll(pageable)
+    public ResponseEntity<Page<BookingResponseDTO>> findAll(Pageable pageable) {
+        Page<BookingResponseDTO> page = bookingService.findAll(pageable)
                 .map(bookingMapper::toDTO);
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok(page);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    // Delete a booking
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         bookingService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

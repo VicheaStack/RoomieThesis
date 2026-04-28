@@ -28,9 +28,9 @@ public class FavoriteController {
     }
 
     @PostMapping
-    public ResponseEntity<Favorite> addFavorite( @RequestBody Map<String, Long> request) {
-        Long renterId = request.get("renterId");
-        Long roomId = request.get("roomId");
+    public ResponseEntity<Favorite> addFavorite( @PathVariable Long renterId,
+                                                 @PathVariable Long roomId) {
+
         Favorite favorite = favoriteService.addFavorite(renterId, roomId);
         return ResponseEntity.status(HttpStatus.CREATED).body(favorite);
     }

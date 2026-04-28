@@ -10,7 +10,7 @@ import org.roomrental.group.RoomieHub.entity.Photo;
 public interface PhotoMapper {
 
     @Mapping(source = "room.roomId", target = "roomId")
-    PhotoRequestDTO toDTO(Photo photo);
+    PhotoResponseDTO toDTO(Photo photo);
 
     @Mapping(target = "photoId", ignore = true)
     @Mapping(target = "room", ignore = true)

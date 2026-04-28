@@ -1,56 +1,61 @@
 package org.roomrental.group.RoomieHub.controller;
 
+import org.roomrental.group.RoomieHub.dto.OwnerProfileRequestDTO;
+import org.roomrental.group.RoomieHub.dto.OwnerProfileResponseDTO;
 import org.roomrental.group.RoomieHub.entity.OwnerProfile;
+import org.roomrental.group.RoomieHub.mapper.OwnerProfileMapper;
 import org.roomrental.group.RoomieHub.service.OwnerProfileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/owner-profiles")
+@RequiredArgsConstructor
 public class OwnerProfileController {
 
     private final OwnerProfileService ownerProfileService;
+    private final OwnerProfileMapper ownerProfileMapper;
 
-    public OwnerProfileController(OwnerProfileService ownerProfileService) {
-        this.ownerProfileService = ownerProfileService;
+    @PostMapping("/{userId}/rate")
+    public ResponseEntity<OwnerProfileResponseDTO> addRate(
+            @PathVariable Long userId,
+            @RequestBody OwnerProfileRequestDTO dto) {
+
+        OwnerProfile updatedProfile = ownerProfileService.addRate(userId, dto.totalListings());
+        return ResponseEntity.ok(ownerProfileMapper.toDto(updatedProfile));
     }
 
-    @PostMapping("/{ownerId}/rate")
-    public ResponseEntity<OwnerProfile> addRate(
-            @PathVariable Long ownerId,
-            @RequestParam double rating) {
-        OwnerProfile updated = ownerProfileService.addRate(ownerId, rating);
-        return ResponseEntity.ok(updated);
+    @PutMapping("/{userId}")
+    public ResponseEntity<OwnerProfileResponseDTO> update(
+            @PathVariable Long userId,
+            @RequestBody OwnerProfileRequestDTO dto) {
+
+        OwnerProfile entity = ownerProfileMapper.toEntity(dto);
+        OwnerProfile updated = ownerProfileService.update(entity, userId);
+        return ResponseEntity.ok(ownerProfileMapper.toDto(updated));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<OwnerProfile> update(
-            @PathVariable Long id,
-            @RequestBody OwnerProfile ownerProfile) {
-        OwnerProfile updated = ownerProfileService.update(ownerProfile, id);
-        return ResponseEntity.ok(updated);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<OwnerProfile> findById(@PathVariable Long id) {
-        OwnerProfile profile = ownerProfileService.findById(id);
-        return ResponseEntity.ok(profile);
+    @GetMapping("/{userId}")
+    public ResponseEntity<OwnerProfileResponseDTO> findById(@PathVariable Long userId) {
+        OwnerProfile profile = ownerProfileService.findById(userId);
+        return ResponseEntity.ok(ownerProfileMapper.toDto(profile));
     }
 
     @GetMapping
-    public ResponseEntity<Page<OwnerProfile>> findAll(
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<OwnerProfileResponseDTO>> findAll(
+            @PageableDefault(size = 20, sort = "userId") Pageable pageable) {
+
         Page<OwnerProfile> page = ownerProfileService.findAll(pageable);
-        return ResponseEntity.ok(page);
+        return ResponseEntity.ok(page.map(ownerProfileMapper::toDto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        ownerProfileService.deleteById(id);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long userId) {
+        ownerProfileService.deleteById(userId);
         return ResponseEntity.noContent().build();
     }
 }
