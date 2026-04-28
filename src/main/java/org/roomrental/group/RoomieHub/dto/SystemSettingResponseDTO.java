@@ -11,6 +11,5 @@ public record SystemSettingResponseDTO(
         String description,
         Boolean isPublic,
         LocalDateTime updatedAt,
-        Long updatedBy
-) {
-}
+        Long updatedById
+) {}

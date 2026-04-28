@@ -7,6 +7,5 @@ public record SystemSettingRequestDTO(
         String category,
         String description,
         Boolean isPublic,
-        Long updatedBy
-) {
-}
+        Long updatedById
+) {}
