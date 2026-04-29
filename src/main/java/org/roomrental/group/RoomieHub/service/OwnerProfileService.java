@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public interface OwnerProfileService {
 
-    OwnerProfile addRate(Long ownerId, double newRating);
+    // Updates owner metrics when a new rating is received
+    OwnerProfile addRate(Long userId, double newRating);
 
-    OwnerProfile update(OwnerProfile ownerProfile, Long id);
-    OwnerProfile findById(Long id);
+    // Standard CRUD operations for profile management
+    OwnerProfile update(OwnerProfile ownerProfile, Long userId);
+    OwnerProfile findById(Long userId);
     Page<OwnerProfile> findAll(Pageable pageable);
-    void deleteById(Long id);
+    void deleteById(Long userId);
 }

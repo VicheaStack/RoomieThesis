@@ -41,7 +41,7 @@ public class AuditLog {
     @Column(columnDefinition = "jsonb")
     private String newValues;
 
-    private InetAddress ipAddress;
+    private String ipAddress;
 
     @Column(columnDefinition = "TEXT")
     private String userAgent;

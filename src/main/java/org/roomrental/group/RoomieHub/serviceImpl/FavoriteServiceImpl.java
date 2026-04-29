@@ -27,7 +27,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public Favorite addFavorite(Long renterId, Long roomId) {
         // Check if already favorited
-        if (favoriteRepository.existsByRenterIdAndRoomId(renterId, roomId)) {
+        if (favoriteRepository.existsByRenterUserIdAndRoomRoomId(renterId, roomId)) {
             throw new IllegalStateException("Room already favorited by this user");
         }
 
@@ -53,7 +53,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public void removeFavorite(Long renterId, Long roomId) {
-        Favorite favorite = favoriteRepository.findByRenterIdAndRoomId(renterId, roomId)
+        Favorite favorite = favoriteRepository.findByRenterUserIdAndRoomRoomId(renterId, roomId)
                 .orElseThrow(() -> new RuntimeException(
                         String.format("Favorite not found for renterId=%d and roomId=%d", renterId, roomId)));
         favoriteRepository.delete(favorite);
@@ -70,12 +70,12 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @Transactional(readOnly = true)
     public Page<Favorite> findAllByRenter(Long renterId, Pageable pageable) {
-        return favoriteRepository.findAllByRenterId(renterId, pageable);
+        return favoriteRepository.findAllByRenterUserId(renterId, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean isFavorited(Long renterId, Long roomId) {
-        return favoriteRepository.existsByRenterIdAndRoomId(renterId, roomId);
+        return favoriteRepository.existsByRenterUserIdAndRoomRoomId(renterId, roomId);
     }
 }
