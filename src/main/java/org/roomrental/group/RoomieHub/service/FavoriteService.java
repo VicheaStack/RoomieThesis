@@ -12,6 +12,7 @@ public interface FavoriteService {
     void removeFavorite(Long id);
     void removeFavorite(Long renterId, Long roomId); // overload for convenience
     Favorite findById(Long id);
+    Page<Favorite> findAll(Pageable pageable);
     Page<Favorite> findAllByRenter(Long renterId, Pageable pageable);
     boolean isFavorited(Long renterId, Long roomId);
 }

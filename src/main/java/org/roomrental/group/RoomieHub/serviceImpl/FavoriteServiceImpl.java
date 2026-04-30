@@ -68,6 +68,11 @@ public class FavoriteServiceImpl implements FavoriteService {
     }
 
     @Override
+    public Page<Favorite> findAll(Pageable pageable) {
+        return favoriteRepository.findAll(pageable);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<Favorite> findAllByRenter(Long renterId, Pageable pageable) {
         return favoriteRepository.findAllByRenterUserId(renterId, pageable);

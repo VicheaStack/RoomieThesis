@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
 public interface RoomService {
 
-    Room create(Room room);
+    // RoomServiceImpl.java
+    Room create(Room room, Long ownerId);
+
     Room update(Long id, Room room);
     Optional<Room> findById(Long id);
     Page<Room> findAllRoom(Pageable pageable);

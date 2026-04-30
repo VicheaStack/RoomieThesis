@@ -12,7 +12,7 @@ spring:
     hibernate:
       ddl-auto: update   # ⚠️ use 'validate' in production
     show-sql: true
-    open-in-view: false
+    open-in-view: true   # ✅ Changed from false to true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -29,17 +29,18 @@ spring:
       password: ${REDIS_PASSWORD:}
       database: ${REDIS_DB:0}
 
+  websocket:
+    max-text-message-size: 8192
+    max-binary-message-size: 8192
+
 # CDN Config (Cloudinary) – replace with your actual credentials
-cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:default}
-  api-key: ${CLOUDINARY_API_KEY:default}
-  api-secret: ${CLOUDINARY_API_SECRET:default}
+
 # OpenAPI / Swagger UI configuration
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html          # default
-    tags-sorter: alpha               # sort endpoints alphabetically
-    operations-sorter: method        # sort operations by HTTP method
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
     enabled: true
   api-docs:
     enabled: true

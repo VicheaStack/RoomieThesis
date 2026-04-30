@@ -32,9 +32,18 @@ public class MessageServiceImpl implements MessageService {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Determine receiver: if sender is renter, receiver is owner; if sender is owner, receiver is renter
+        User receiver;
+        if (sender.getUserId().equals(conversation.getRenter().getUserId())) {
+            receiver = conversation.getOwner();
+        } else {
+            receiver = conversation.getRenter();
+        }
+
         Message message = Message.builder()
                 .conversation(conversation)
                 .sender(sender)
+                .receiver(receiver)  // ← THIS WAS MISSING
                 .messageText(text)
                 .isRead(false)
                 .build();

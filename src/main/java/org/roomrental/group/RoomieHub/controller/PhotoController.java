@@ -24,7 +24,7 @@ public class PhotoController {
     @PostMapping
     public ResponseEntity<PhotoResponseDTO> create(@RequestBody PhotoRequestDTO photoRequestDTO) {
         Photo entity = photoMapper.toEntity(photoRequestDTO);
-        Photo created = photoService.create(entity);
+        Photo created = photoService.create(entity, photoRequestDTO.roomId());
         PhotoResponseDTO dto = photoMapper.toDTO(created);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }

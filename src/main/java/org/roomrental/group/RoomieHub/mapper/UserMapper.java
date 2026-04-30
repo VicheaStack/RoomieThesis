@@ -15,7 +15,6 @@ public interface UserMapper {
 
     // DTO → Entity
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "lastLogin", ignore = true)

@@ -2,11 +2,14 @@ package org.roomrental.group.RoomieHub.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.roomrental.group.RoomieHub.entity.User;
+import org.roomrental.group.RoomieHub.entity.UserRole;
 import org.roomrental.group.RoomieHub.repository.RoomRepository;
 import org.roomrental.group.RoomieHub.repository.UserRepository;
 import org.roomrental.group.RoomieHub.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.management.relation.Role;
 
 @Transactional
 @Slf4j
@@ -21,7 +24,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(User user) {
+    public User create(User user, UserRole role) {
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+
+        user.setRole(role);
 
         if(userRepository.existsByEmail(user.getEmail())){
             throw new RuntimeException("User with email " + user.getEmail() + " already exists");
@@ -42,12 +50,12 @@ public class UserServiceImpl implements UserService {
         User update = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User with id " + id + " not found"));
 
+        update.setFirstName(user.getFirstName());
+        update.setLastName(user.getLastName());
+        update.setPassword(user.getPassword());
         update.setEmail(user.getEmail());
         update.setPhoneNumber(user.getPhoneNumber());
-        update.setPasswordHash(user.getPasswordHash());
-        update.setFullName(user.getFullName());
         update.setProfilePhotoUrl(user.getProfilePhotoUrl());
-
         User save = userRepository.save(update);
         log.debug("User updated: {}", save);
 
