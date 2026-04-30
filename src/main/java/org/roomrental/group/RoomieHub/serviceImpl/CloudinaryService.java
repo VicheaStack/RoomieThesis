@@ -26,7 +26,9 @@ public class CloudinaryService {
             return result.get("secure_url").toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("Image upload failed");
+            System.out.println("Cloudinary Error: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Image upload failed: " + e.getMessage());
         }
     }
 }

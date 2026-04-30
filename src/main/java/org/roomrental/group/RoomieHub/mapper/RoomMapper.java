@@ -15,7 +15,7 @@ public interface RoomMapper {
 
     @Mapping(source = "owner.userId", target = "ownerId")
     @Mapping(target = "status", expression = "java(mapStatusToString(room.getStatus()))")
-    @Mapping(source = "amenities", target = "amenityIds", qualifiedByName = "mapAmenitiesToIds")
+    //@Mapping(source = "amenities", target = "amenityIds", qualifiedByName = "mapAmenitiesToIds")
     RoomResponseDTO toDTO(Room room);
 
     @Mapping(target = "roomId", ignore = true)

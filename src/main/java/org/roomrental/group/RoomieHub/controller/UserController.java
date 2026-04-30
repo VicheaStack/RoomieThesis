@@ -3,6 +3,7 @@ package org.roomrental.group.RoomieHub.controller;
 import org.roomrental.group.RoomieHub.dto.UserRequestDTO;
 import org.roomrental.group.RoomieHub.dto.UserResponseDTO;
 import org.roomrental.group.RoomieHub.entity.User;
+import org.roomrental.group.RoomieHub.entity.UserRole;
 import org.roomrental.group.RoomieHub.mapper.UserMapper;
 import org.roomrental.group.RoomieHub.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -23,20 +24,36 @@ public class UserController {
     }
 
     // Create a new user
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO userRequestDTO) {
+    @PostMapping("/owner")
+    public ResponseEntity<UserResponseDTO> createOwner(@RequestBody UserRequestDTO userRequestDTO) {
         User entity = userMapper.toEntity(userRequestDTO);
-        User created = userService.create(entity);
+        User created = userService.create(entity, UserRole.OWNER);
         UserResponseDTO dto = userMapper.toDTO(created);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    @PostMapping("/tenant")
+    public ResponseEntity<UserResponseDTO> createTenant(@RequestBody UserRequestDTO userRequestDTO) {
+        User entity = userMapper.toEntity(userRequestDTO);
+        User created = userService.create(entity, UserRole.RENTER);
+        UserResponseDTO dto = userMapper.toDTO(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
+//    @PostMapping
+//    public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO userRequestDTO) {
+//        User entity = userMapper.toEntity(userRequestDTO);
+//        User created = userService.create(entity, UserRole.OWNER);
+//        UserResponseDTO dto = userMapper.toDTO(created);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+//    }
+
     // Get a user by ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
         User user = userService.findById(id);
-        userMapper.toDTO(user);
-        return ResponseEntity.ok(user);
+        UserResponseDTO dto = userMapper.toDTO(user);
+        return ResponseEntity.ok(dto);
     }
 
     // Update an existing user

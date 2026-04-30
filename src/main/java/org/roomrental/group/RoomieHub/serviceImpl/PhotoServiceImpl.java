@@ -3,7 +3,9 @@ package org.roomrental.group.RoomieHub.serviceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.roomrental.group.RoomieHub.entity.Photo;
+import org.roomrental.group.RoomieHub.entity.Room;
 import org.roomrental.group.RoomieHub.repository.PhotoRepository;
+import org.roomrental.group.RoomieHub.repository.RoomRepository;
 import org.roomrental.group.RoomieHub.service.PhotoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class PhotoServiceImpl implements PhotoService {
 
     private final PhotoRepository photoRepository;
+    private final RoomRepository roomRepository;
 
     @Override
-    public Photo create(Photo photo) {
+    public Photo create(Photo photo, Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
+        photo.setRoom(room);
         Photo saved = photoRepository.save(photo);
         log.info("Photo created with id: {}", saved.getPhotoId());
         return saved;
@@ -28,12 +34,10 @@ public class PhotoServiceImpl implements PhotoService {
         Photo existing = photoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Photo not found with id: " + id));
 
-        // Update only the fields that are allowed to change
-        existing.setPhotoUrl(photo.getPhotoUrl());
-        existing.setCaption(photo.getCaption());
-        existing.setIsPrimary(photo.getIsPrimary());
-        existing.setDisplayOrder(photo.getDisplayOrder());
-        // room relationship should not be changed once set
+        if (photo.getPhotoUrl() != null) existing.setPhotoUrl(photo.getPhotoUrl());
+        if (photo.getCaption() != null) existing.setCaption(photo.getCaption());
+        if (photo.getIsPrimary() != null) existing.setIsPrimary(photo.getIsPrimary());
+        if (photo.getDisplayOrder() != null) existing.setDisplayOrder(photo.getDisplayOrder());
 
         Photo updated = photoRepository.save(existing);
         log.info("Photo updated with id: {}", updated.getPhotoId());

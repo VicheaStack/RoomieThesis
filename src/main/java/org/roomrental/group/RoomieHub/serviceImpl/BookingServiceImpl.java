@@ -2,12 +2,21 @@ package org.roomrental.group.RoomieHub.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.roomrental.group.RoomieHub.entity.Booking;
+import org.roomrental.group.RoomieHub.entity.BookingStatus;
+import org.roomrental.group.RoomieHub.entity.Room;
+import org.roomrental.group.RoomieHub.entity.User;
+import org.roomrental.group.RoomieHub.entity.UserRole;
 import org.roomrental.group.RoomieHub.repository.BookingRepository;
+import org.roomrental.group.RoomieHub.repository.RoomRepository;
+import org.roomrental.group.RoomieHub.repository.UserRepository;
 import org.roomrental.group.RoomieHub.service.BookingService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @Slf4j
@@ -15,54 +24,113 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
+    private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
-    public BookingServiceImpl(BookingRepository bookingRepository) {
+    public BookingServiceImpl(BookingRepository bookingRepository,
+                              RoomRepository roomRepository,
+                              UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
+        this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public Booking create(Booking booking) {
-        log.info("create new booking for user ");
-        return bookingRepository.save(booking);
+    public Booking create(Booking booking, Long roomId, Long renterId) {
+
+        // 1. Validate renter exists and is a TENANT
+        User renter = userRepository.findById(renterId)
+                .orElseThrow(() -> new RuntimeException("Renter not found with id: " + renterId));
+
+        if (renter.getRole() != UserRole.RENTER) {
+            throw new RuntimeException("Only tenants can book rooms. User " + renterId + " is a " + renter.getRole());
+        }
+
+        // 2. Validate room exists and is AVAILABLE
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
+
+        if (!"AVAILABLE".equals(room.getStatus().name())) {
+            throw new RuntimeException("Room " + roomId + " is not available. Status: " + room.getStatus());
+        }
+
+        // 3. Validate dates
+        if (booking.getEndDate().isBefore(booking.getStartDate())) {
+            throw new RuntimeException("End date must be after start date");
+        }
+        if (booking.getStartDate().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Start date cannot be in the past");
+        }
+
+        // 4. Calculate nights and total amount
+        long nights = ChronoUnit.DAYS.between(booking.getStartDate(), booking.getEndDate());
+        double pricePerNight = room.getPricePerNight();
+        double totalAmount = nights * pricePerNight;
+
+        // 5. Set all required fields
+        booking.setRenter(renter);
+        booking.setRoom(room);
+        booking.setPricePerNight(pricePerNight);
+        booking.setTotalNights((int) nights);
+        booking.setTotalAmount(totalAmount);
+        booking.setStatus(BookingStatus.PENDING);
+
+        Booking saved = bookingRepository.save(booking);
+        log.info("Booking created: id={}, room={}, renter={}, {} nights, total=${}",
+                saved.getBookingId(), roomId, renterId, nights, totalAmount);
+        return saved;
     }
 
-    @Transactional
     @Override
     public Booking update(Booking booking, Long id) {
         Booking update = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("can't find user record"));
+                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
 
-        update.setStartDate(booking.getStartDate());
-        update.setEndDate(booking.getEndDate());
-        update.setPricePerNight(booking.getPricePerNight());
-        update.setStatus(booking.getStatus());
+        if (booking.getStartDate() != null) {
+            update.setStartDate(booking.getStartDate());
+        }
+        if (booking.getEndDate() != null) {
+            update.setEndDate(booking.getEndDate());
+        }
+        if (booking.getSpecialRequests() != null) {
+            update.setSpecialRequests(booking.getSpecialRequests());
+        }
+        if (booking.getStatus() != null) {
+            update.setStatus(booking.getStatus());
+        }
 
-        Booking save = bookingRepository.save(update);
-        log.info("booking update successfully ");
-        return save;
+        Room room = update.getRoom();
+        long nights = ChronoUnit.DAYS.between(update.getStartDate(), update.getEndDate());
+        update.setPricePerNight(room.getPricePerNight());       // ← FROM ROOM
+        update.setTotalNights((int) nights);                     // ← CALCULATED
+        update.setTotalAmount(nights * room.getPricePerNight()); // ← CALCULATED
+
+        Booking saved = bookingRepository.save(update);
+        log.info("Booking updated: id={}, {} nights, total=${}",
+                saved.getBookingId(), nights, saved.getTotalAmount());
+        return saved;
     }
 
     @Transactional(readOnly = true)
     @Override
     public Booking findById(Long id) {
         return bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("not found booking record"));
+                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
     }
 
     @Transactional(readOnly = true)
     @Override
     public Page<Booking> findAll(Pageable pageable) {
-        log.debug("Fetching all bookings with pagination: page {}, size {}",
-                pageable.getPageNumber(), pageable.getPageSize());
+        log.debug("Fetching all bookings: page {}, size {}", pageable.getPageNumber(), pageable.getPageSize());
         return bookingRepository.findAll(pageable);
     }
 
     @Override
     public void deleteById(Long id) {
-        if(!bookingRepository.existsById(id)){
-            throw new RuntimeException("Booking not exist ");
+        if (!bookingRepository.existsById(id)) {
+            throw new RuntimeException("Booking not found with id: " + id);
         }
         bookingRepository.deleteById(id);
-        log.info("Booking cancel successfully");
+        log.info("Booking deleted: {}", id);
     }
 }

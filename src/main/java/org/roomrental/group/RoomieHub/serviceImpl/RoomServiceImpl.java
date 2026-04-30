@@ -2,7 +2,10 @@ package org.roomrental.group.RoomieHub.serviceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.roomrental.group.RoomieHub.entity.Room;
+import org.roomrental.group.RoomieHub.entity.User;
+import org.roomrental.group.RoomieHub.entity.UserRole;
 import org.roomrental.group.RoomieHub.repository.RoomRepository;
+import org.roomrental.group.RoomieHub.repository.UserRepository;
 import org.roomrental.group.RoomieHub.service.RoomService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,17 +20,33 @@ import java.util.Optional;
 public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
+    private final UserRepository userRepository;
 
-    public RoomServiceImpl(RoomRepository roomRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository,
+                           UserRepository userRepository) {
         this.roomRepository = roomRepository;
+        this.userRepository = userRepository;
     }
 
+    // RoomServiceImpl.java
     @Override
-    public Room create(Room room) {
-        if(roomRepository.existsByOwnerAndTitle(room.getOwner(), room.getTitle())) {
-            throw new RuntimeException("Room already booking: " + room.getRoomId());
+    public Room create(Room room, Long ownerId) {
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner not found with id: " + ownerId));
+
+        if (owner.getRole() != UserRole.OWNER) {
+            throw new RuntimeException("User with id " + ownerId + " is not an owner. Only owners can create rooms.");
         }
-        return roomRepository.save(room);
+
+        room.setOwner(owner);
+
+        if (roomRepository.existsByOwnerAndTitle(owner, room.getTitle())) {
+            throw new RuntimeException("Room already exists with this title for owner: " + room.getTitle());
+        }
+
+        Room saved = roomRepository.save(room);
+        log.info("Room created: {}", saved);
+        return saved;
     }
 
     @Transactional

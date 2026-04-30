@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/favorites")
 public class FavoriteController {
@@ -27,20 +25,23 @@ public class FavoriteController {
         this.favroiteMapper = favroiteMapper;
     }
 
-    @PostMapping
-    public ResponseEntity<Favorite> addFavorite( @PathVariable Long renterId,
-                                                 @PathVariable Long roomId) {
-
+    // Add favorite
+    @PostMapping("/{renterId}/{roomId}")
+    public ResponseEntity<FavoriteResponseDTO> addFavorite(@PathVariable Long renterId,
+                                                           @PathVariable Long roomId) {
         Favorite favorite = favoriteService.addFavorite(renterId, roomId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(favorite);
+        FavoriteResponseDTO dto = favroiteMapper.toDTO(favorite);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    // Remove favorite by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeFavoriteById(@PathVariable Long id) {
         favoriteService.removeFavorite(id);
         return ResponseEntity.noContent().build();
     }
 
+    // Remove favorite by renter + room
     @DeleteMapping
     public ResponseEntity<Void> removeFavoriteByRenterAndRoom(
             @RequestParam Long renterId,
@@ -49,6 +50,16 @@ public class FavoriteController {
         return ResponseEntity.noContent().build();
     }
 
+    // Get all favorites (no filter)
+    @GetMapping("/all")
+    public ResponseEntity<Page<FavoriteResponseDTO>> findAll(
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Favorite> page = favoriteService.findAll(pageable);
+        Page<FavoriteResponseDTO> dtoPage = page.map(favroiteMapper::toDTO);
+        return ResponseEntity.ok(dtoPage);
+    }
+
+    // Get favorite by ID
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteResponseDTO> findById(@PathVariable Long id) {
         Favorite favorite = favoriteService.findById(id);
@@ -56,14 +67,17 @@ public class FavoriteController {
         return ResponseEntity.ok(dto);
     }
 
+    // Get favorites by renter
     @GetMapping
-    public ResponseEntity<Page<Favorite>> findAllByRenter(
+    public ResponseEntity<Page<FavoriteResponseDTO>> findAllByRenter(
             @RequestParam Long renterId,
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Favorite> page = favoriteService.findAllByRenter(renterId, pageable);
-        return ResponseEntity.ok(page);
+        Page<FavoriteResponseDTO> dtoPage = page.map(favroiteMapper::toDTO);
+        return ResponseEntity.ok(dtoPage);
     }
 
+    // Check if room is favorited
     @GetMapping("/check")
     public ResponseEntity<Boolean> isFavorited(
             @RequestParam Long renterId,

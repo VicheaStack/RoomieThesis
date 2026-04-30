@@ -7,6 +7,7 @@ import org.roomrental.group.RoomieHub.mapper.BookingMapper;
 import org.roomrental.group.RoomieHub.service.BookingService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +26,11 @@ public class BookingController {
 
     // Create a new booking
     @PostMapping
-    public ResponseEntity<BookingResponseDTO> create(@RequestBody BookingRequestDTO dto) {
-        Booking entity = bookingMapper.toEntity(dto);
-        Booking booking = bookingService.create(entity);
-        return ResponseEntity.ok(bookingMapper.toDTO(booking));
+    public ResponseEntity<BookingResponseDTO> create(@RequestBody BookingRequestDTO requestDTO) {
+        Booking entity = bookingMapper.toEntity(requestDTO);
+        Booking booking = bookingService.create(entity, requestDTO.roomId(), requestDTO.renterId());  // ← pass IDs
+        BookingResponseDTO dto = bookingMapper.toDTO(booking);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     // Update an existing booking

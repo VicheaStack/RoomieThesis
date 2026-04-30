@@ -1,11 +1,11 @@
 package org.roomrental.group.RoomieHub.dto;
 
 public record UserRequestDTO(
-        String email,
+        String firstName,
+        String lastName,
         String password,
-        String fullName,
         String phoneNumber,
-        String profilePhotoUrl,
-        String role
+        String email,
+        String profilePhotoUrl
 ) {
 }
