@@ -33,7 +33,11 @@ spring:
     max-text-message-size: 8192
     max-binary-message-size: 8192
 
-# CDN Config (Cloudinary) – replace with your actual credentials
+# CDN Config (Cloudinary) – replace with your actual credentialsS
+cloudinary:
+  cloud-name: ddpatzqpg
+  api-key: 712578661853192
+  api-secret: C-C6i6vsg30hC_-i7_jzMr2vxFY
 
 # OpenAPI / Swagger UI configuration
 springdoc:
