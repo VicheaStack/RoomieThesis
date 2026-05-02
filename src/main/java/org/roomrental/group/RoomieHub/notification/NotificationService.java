@@ -5,6 +5,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface NotificationService {
 
-    Notification create(Notification message);
+    Notification create(Notification notification, Long userId);
     void deleteById(Long id);
 }

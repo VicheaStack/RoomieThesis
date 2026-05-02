@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface OwnerProfileService {
 
+    OwnerProfile create(Long userId);
     // Updates owner metrics when a new rating is received
     OwnerProfile addRate(Long userId, double newRating);
 
