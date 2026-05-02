@@ -18,11 +18,11 @@ public class NotificationController {
     }
 
     @PostMapping
-    public ResponseEntity<NotificationResponseDTO> create(@RequestBody NotificationRequestDTO notificationRequestDTO) {
-        Notification entity = notificationMapper.toEntity(notificationRequestDTO);
-        Notification created = notificationService.create(entity);
-        NotificationResponseDTO dto = notificationMapper.toDTO(created);
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    public ResponseEntity<NotificationResponseDTO> create(@RequestBody NotificationRequestDTO dto) {
+        Notification entity = notificationMapper.toEntity(dto);
+        Notification created = notificationService.create(entity, dto.userId());
+        NotificationResponseDTO response = notificationMapper.toDTO(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
