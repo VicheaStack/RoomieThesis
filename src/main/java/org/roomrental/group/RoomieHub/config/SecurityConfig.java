@@ -27,37 +27,40 @@ public class SecurityConfig {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
 
+    // ✅ Required bean for stateless OAuth2
+    @Bean
+    public CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new CookieAuthorizationRequestRepository();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF for stateless REST API
                 .csrf(csrf -> csrf.disable())
-                // Stateless session – no server-side HTTP sessions
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                        .requestMatchers("/oauth2/**", "/login/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Public user registration (tenant / owner)
                         .requestMatchers(HttpMethod.POST, "/api/users/tenant", "/api/users/owner").permitAll()
-                        // Role-based access
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/room").hasRole("OWNER")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/room/**").hasRole("OWNER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/room/**").hasRole("OWNER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/bookings").hasRole("RENTER")
-                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
-                // OAuth2 social login (e.g., Google)
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(auth -> auth
+                                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                        )
+                        .redirectionEndpoint(redir -> redir
+                                .baseUri("/login/oauth2/code/*")
+                        )
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 )
-                // Add JWT filter before the standard authentication filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
