@@ -28,7 +28,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         String email = (String) attributes.get("email");
-        String role = (String) attributes.get("role");
+        Object roleObj = attributes.get("role");
+        String role = (roleObj != null) ? roleObj.toString() : "RENTER";   // fallback
 
         String token = jwtUtil.generateToken(email, role);
 
