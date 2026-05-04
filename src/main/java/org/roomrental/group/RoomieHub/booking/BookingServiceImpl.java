@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.booking;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.room.Room;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.user.UserRole;
@@ -39,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new RuntimeException("Renter not found with id: " + renterId));
 
         if (renter.getRole() != UserRole.RENTER) {
-            throw new RuntimeException("Only tenants can book rooms. User " + renterId + " is a " + renter.getRole());
+            throw AppException.of("Only tenants can book rooms. User " + renterId + " is a " + renter.getRole());
         }
 
         // 2. Validate room exists and is AVAILABLE
@@ -47,15 +48,15 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new RuntimeException("Room not found with id: " + roomId));
 
         if (!"AVAILABLE".equals(room.getStatus().name())) {
-            throw new RuntimeException("Room " + roomId + " is not available. Status: " + room.getStatus());
+            throw AppException.of("Room " + roomId + " is not available. Status: " + room.getStatus());
         }
 
         // 3. Validate dates
         if (booking.getEndDate().isBefore(booking.getStartDate())) {
-            throw new RuntimeException("End date must be after start date");
+            throw AppException.of("End date must be after start date");
         }
         if (booking.getStartDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("Start date cannot be in the past");
+            throw AppException.of("Start date cannot be in the past");
         }
 
         // 4. Calculate nights and total amount
@@ -124,7 +125,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public void deleteById(Long id) {
         if (!bookingRepository.existsById(id)) {
-            throw new RuntimeException("Booking not found with id: " + id);
+            throw AppException.of("Booking not found with id: " + id);
         }
         bookingRepository.deleteById(id);
         log.info("Booking deleted: {}", id);

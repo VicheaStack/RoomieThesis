@@ -2,6 +2,7 @@ package org.roomrental.group.RoomieHub.favorite;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.room.Room;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.room.RoomRepository;
@@ -42,7 +43,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public void removeFavorite(Long id) {
         if (!favoriteRepository.existsById(id)) {
-            throw new RuntimeException("Favorite not found with id: " + id);
+            throw AppException.of("Favorite not found with id: " + id);
         }
         favoriteRepository.deleteById(id);
         log.info("Favorite removed with id: {}", id);

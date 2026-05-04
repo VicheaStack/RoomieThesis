@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.room.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +27,11 @@ public class UserServiceImpl implements UserService {
         user.setRole(role);
 
         if(userRepository.existsByEmail(user.getEmail())){
-            throw new RuntimeException("User with email " + user.getEmail() + " already exists");
+            throw AppException.of("User with email " + user.getEmail() + " already exists");
         }
 
         if(userRepository.existsByPhoneNumber(user.getPhoneNumber())){
-            throw new RuntimeException("User with phone number " + user.getPhoneNumber() + " already exists");
+            throw AppException.of("User with phone number " + user.getPhoneNumber() + " already exists");
         }
 
         User save = userRepository.save(user);
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
         if(!userRepository.existsById(id)){
-            throw new RuntimeException("User with id " + id + " not found");
+            throw AppException.of("User with id " + id + " not found");
         }
         log.debug("User deleted: {}", id);
         userRepository.deleteById(id);

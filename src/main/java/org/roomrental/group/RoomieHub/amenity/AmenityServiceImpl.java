@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.amenity;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ public class AmenityServiceImpl implements AmenityService {
     @Override
     public void deleteById(Long id) {
         if(!amenityRepository.existsById(id)){
-            throw new RuntimeException("amenity not found with id:" + id);
+            throw AppException.of("amenity not found with id:" + id);
         }
         amenityRepository.deleteById(id);
     }

@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.ownerProfile;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.user.UserRepository;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class OwnerProfileServiceImpl implements OwnerProfileService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
         if (ownerProfileRepository.existsById(userId)) {
-            throw new RuntimeException("OwnerProfile already exists for user: " + userId);
+            throw AppException.of("OwnerProfile already exists for user: " + userId);
         }
 
         OwnerProfile profile = new OwnerProfile();
@@ -90,7 +91,7 @@ public class OwnerProfileServiceImpl implements OwnerProfileService {
     @Transactional
     public void deleteById(Long userId) {
         if (!ownerProfileRepository.existsById(userId)) {
-            throw new RuntimeException("OwnerProfile not found");
+            throw AppException.of("OwnerProfile not found");
         }
         ownerProfileRepository.deleteById(userId);
     }

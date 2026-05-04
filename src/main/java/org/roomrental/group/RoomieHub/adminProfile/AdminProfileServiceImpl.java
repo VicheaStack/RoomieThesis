@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.adminProfile;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class AdminProfileServiceImpl implements AdminProfileService {
     @Override
     public void deleteById(Long id) {
         if(!adminProfileRepository.existsById(id)){
-            throw new RuntimeException("admin profile don't exist");
+            throw AppException.of("admin profile don't exist");
         }
         adminProfileRepository.deleteById(id);
     }

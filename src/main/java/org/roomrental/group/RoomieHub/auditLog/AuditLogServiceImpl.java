@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.auditLog;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class AuditLogServiceImpl implements AuditLogService {
     @Override
     public void deleteById(Long id) {
         if(!auditLogRepository.existsById(id)) {
-            throw new RuntimeException("AuditLog Not Found id: " + id);
+            throw AppException.of("AuditLog Not Found id: " + id);
         }
         auditLogRepository.deleteById(id);
         log.info("AuditLog Deleted Successfully {} ", id);
