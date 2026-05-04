@@ -37,16 +37,24 @@ RoomieHub is a full-featured room rental platform backend built with Spring Boot
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- **Backend Framework:** Spring Boot (Java)
-- **Database:** PostgreSQL (primary), Redis (caching & session)
-- **Security:** Spring Security, OAuth2 (Google), JWT
-- **Real-time:** WebSockets
-- **File Storage:** Cloudinary
-- **Build Tool:** Maven
-- **Documentation:** Swagger (SpringDoc OpenAPI)
-- **Other:** Lombok, Jakarta Persistence (JPA), Hibernate
+| Category                | Technology                                                                 |
+|-------------------------|----------------------------------------------------------------------------|
+| **Language**            | Java 21                                                                    |
+| **Framework**           | Spring Boot 4.0.4                                                          |
+| **Web**                 | Spring Web MVC (REST), WebSocket                                           |
+| **Database**            | PostgreSQL (primary), H2 (dev/test)                                        |
+| **Database Migrations** | Flyway                                                                     |
+| **ORM**                 | Spring Data JPA (Hibernate)                                                |
+| **Security**            | Spring Security, OAuth2 Client & Resource Server, JWT (jjwt 0.12.5), BCrypt |
+| **File Storage**        | Cloudinary                                                                 |
+| **Object Mapping**      | MapStruct + Lombok binding                                                 |
+| **API Documentation**   | SpringDoc OpenAPI (Swagger UI)                                             |
+| **Validation**          | Bean Validation (Hibernate Validator)                                      |
+| **Environment Config**  | spring-dotenv (.env files)                                                 |
+| **Dev Tools**           | Spring Boot DevTools (hot reload)                                          |
+| **Build**               | Maven                                                                      |
 
 ---
 
@@ -54,9 +62,9 @@ RoomieHub is a full-featured room rental platform backend built with Spring Boot
 
 ### Prerequisites
 
-- Java 17+
+- Java 21
 - Maven 3.8+
-- PostgreSQL & Redis instances
+- PostgreSQL instance (H2 can be used for development)
 - Cloudinary account (for image uploads)
 - Google Cloud Console project (for OAuth2)
 
