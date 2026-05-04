@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.room;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.user.UserRole;
 import org.roomrental.group.RoomieHub.user.UserRepository;
@@ -32,13 +33,13 @@ public class RoomServiceImpl implements RoomService {
                 .orElseThrow(() -> new RuntimeException("Owner not found with id: " + ownerId));
 
         if (owner.getRole() != UserRole.OWNER) {
-            throw new RuntimeException("User with id " + ownerId + " is not an owner. Only owners can create rooms.");
+            throw AppException.of("User with id " + ownerId + " is not an owner. Only owners can create rooms.");
         }
 
         room.setOwner(owner);
 
         if (roomRepository.existsByOwnerAndTitle(owner, room.getTitle())) {
-            throw new RuntimeException("Room already exists with this title for owner: " + room.getTitle());
+            throw AppException.of("Room already exists with this title for owner: " + room.getTitle());
         }
 
         Room saved = roomRepository.save(room);
@@ -89,7 +90,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void deleteById(Long id) {
         if(roomRepository.existsById(id)) {
-            throw new RuntimeException("Room already booking: " + id);
+            throw AppException.of("Room already booking: " + id);
         }
         log.info("Room already delete");
         roomRepository.deleteById(id);

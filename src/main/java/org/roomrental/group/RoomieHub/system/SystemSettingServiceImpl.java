@@ -1,5 +1,6 @@
 package org.roomrental.group.RoomieHub.system;
 
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class SystemSettingServiceImpl implements SystemSettingService {
     public SystemSetting create(SystemSetting setting) {
 
         if (repository.existsBySettingKey(setting.getSettingKey())) {
-            throw new RuntimeException("Setting already exists: " + setting.getSettingKey());
+            throw AppException.of("Setting already exists: " + setting.getSettingKey());
         }
 
         return repository.save(setting);

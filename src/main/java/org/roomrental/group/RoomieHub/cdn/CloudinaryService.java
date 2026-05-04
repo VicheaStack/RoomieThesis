@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.cdn;
 
 import com.cloudinary.Cloudinary;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +29,7 @@ public class CloudinaryService {
         } catch (Exception e) {
             System.out.println("Cloudinary Error: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Image upload failed: " + e.getMessage());
+            throw AppException.of("Image upload failed: " + e.getMessage());
         }
     }
 }

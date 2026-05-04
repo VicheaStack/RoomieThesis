@@ -5,14 +5,14 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/RoomieHub}
     username: ${DB_USERNAME:phoneshop_night}
-    password: ${DB_PASSWORD:vichea123}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update   # ⚠️ use 'validate' in production
+      ddl-auto: update
     show-sql: true
-    open-in-view: true   # ✅ Changed from false to true
+    open-in-view: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -33,13 +33,27 @@ spring:
     max-text-message-size: 8192
     max-binary-message-size: 8192
 
-# CDN Config (Cloudinary) – replace with your actual credentialsS
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: openid, profile, email
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: 3600000
+
 cloudinary:
   cloud-name: ddpatzqpg
-  api-key: 712578661853192
-  api-secret: C-C6i6vsg30hC_-i7_jzMr2vxFY
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
 
-# OpenAPI / Swagger UI configuration
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -50,7 +64,7 @@ springdoc:
     enabled: true
 
 server:
-  port: ${SERVER_PORT:8088}
+  port: 8080
 
 management:
   endpoints:

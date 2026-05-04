@@ -2,6 +2,7 @@ package org.roomrental.group.RoomieHub.photos;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.room.Room;
 import org.roomrental.group.RoomieHub.room.RoomRepository;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     public void deleteById(Long id) {
         if (!photoRepository.existsById(id)) {
-            throw new RuntimeException("Photo not found with id: " + id);
+            throw AppException.of("Photo not found with id: " + id);
         }
         photoRepository.deleteById(id);
         log.info("Photo deleted with id: {}", id);

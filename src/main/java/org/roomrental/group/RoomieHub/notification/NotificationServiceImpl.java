@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.notification;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void deleteById(Long id) {
         if (!notificationRepository.existsById(id)) {
-            throw new RuntimeException("Notification Not Found");
+            throw AppException.of("Notification Not Found");
         }
         notificationRepository.deleteById(id);
         log.info("Notification deleted");
