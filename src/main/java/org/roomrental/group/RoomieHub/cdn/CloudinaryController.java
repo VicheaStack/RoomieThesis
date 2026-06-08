@@ -17,7 +17,8 @@ public class CloudinaryController {
     }
 
     @PostMapping("/upload")
-    public String upload(@RequestParam("file") MultipartFile file) {
-        return cloudinaryService.uploadImage(file);
+    public String upload(@RequestParam("file") MultipartFile file,
+                         @RequestParam(value = "publicId", required = false) String publicId) {
+        return cloudinaryService.uploadImage(file, publicId);
     }
 }

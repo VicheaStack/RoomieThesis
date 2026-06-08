@@ -8,6 +8,8 @@ import org.roomrental.group.RoomieHub.room.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,12 @@ public class PhotoServiceImpl implements PhotoService {
         Photo updated = photoRepository.save(existing);
         log.info("Photo updated with id: {}", updated.getPhotoId());
         return updated;
+    }
+
+    @Override
+    public Photo findById(Long id) {
+        return photoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Can't find By id "));
     }
 
     @Override
