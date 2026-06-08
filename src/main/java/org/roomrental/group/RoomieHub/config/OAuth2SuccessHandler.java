@@ -29,12 +29,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String email = (String) attributes.get("email");
         Object roleObj = attributes.get("role");
-        String role = (roleObj != null) ? roleObj.toString() : "RENTER";   // fallback
+        String role = (roleObj != null) ? roleObj.toString() : "RENTER";
 
         String token = jwtUtil.generateToken(email, role);
 
-        response.setContentType("application/json");
-        response.getWriter().write("{\"token\":\"" + token + "\"}");
-        response.getWriter().flush();
+        // Instead of writing JSON, redirect to the frontend with the token
+        String redirectUrl = "http://localhost:3000/oauth2/redirect?token=" + token;
+        response.sendRedirect(redirectUrl);
     }
 }
