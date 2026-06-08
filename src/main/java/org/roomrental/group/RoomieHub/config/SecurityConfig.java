@@ -1,5 +1,6 @@
 package org.roomrental.group.RoomieHub.config;
 
+import org.roomrental.group.RoomieHub.auditLog.AuditLogServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,7 +35,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuditLogServiceImpl auditLogServiceImpl) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -42,7 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/cdn/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/tenant", "/api/users/owner").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/Moderator/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/Moderator/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/room/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/owner-profiles/**").permitAll()
@@ -87,6 +92,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
                         .authorizationEndpoint(auth -> auth
                                 .authorizationRequestRepository(cookieAuthorizationRequestRepository())
                         )

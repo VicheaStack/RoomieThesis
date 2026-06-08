@@ -39,6 +39,12 @@ public class User {
     @Column(unique = true, nullable = false, length = 100)
     private String email;
 
+    @Column(nullable = true)
+    private String provider;     // e.g. "google", "github"
+
+    @Column(nullable = true)
+    private String providerId;   // unique ID from the provider
+
     @Column(length = 20)
     private String phoneNumber;
 

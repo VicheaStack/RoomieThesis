@@ -35,4 +35,11 @@ public class PhotoController {
         photoService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PhotoResponseDTO> FindById(@PathVariable Long id) {
+        Photo byId = photoService.findById(id);
+        PhotoResponseDTO dto = photoMapper.toDTO(byId);
+        return ResponseEntity.ok(dto);
+    }
 }

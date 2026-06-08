@@ -1,5 +1,6 @@
 package org.roomrental.group.RoomieHub.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.NoSuchElementException;
 
+@Hidden
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {

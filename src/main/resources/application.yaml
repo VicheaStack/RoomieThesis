@@ -3,35 +3,46 @@ spring:
     name: roomiehub
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/RoomieHub}
-    username: ${DB_USERNAME:phoneshop_night}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/RoomieHub}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:newpassword}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    open-in-view: true
+      ddl-auto: validate          # never 'update' in production
+    show-sql: false               # set to true only for debugging
+    open-in-view: false           # best practice to avoid N+1 queries
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
 
   flyway:
-    enabled: false
-    locations: classpath:db/migration
+    enabled: true                 # you have migrations, so enable it
     baseline-on-migrate: true
+    validate-on-migrate: true
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
+      host: ${REDIS_HOST:redis}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      password: ${REDIS_PASSWORD:}   # set a password in production
       database: ${REDIS_DB:0}
-
-  websocket:
-    max-text-message-size: 8192
-    max-binary-message-size: 8192
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
 
   security:
     oauth2:
@@ -40,42 +51,35 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope: openid, profile, email
+            scope:
+              - openid
+              - profile
+              - email
         provider:
           google:
             issuer-uri: https://accounts.google.com
+  web:
+    error:
+      include-binding-errors: always
+      include-message: always
 
 jwt:
-  secret: ${JWT_SECRET}
-  expiration-ms: 3600000
+  secret: ${JWT_SECRET:dGhpcyBpcyBhIHNlY3JldCBrZXkgZm9yIGp3dCB0b2tlbnM=}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
 
 cloudinary:
-  cloud-name: ddpatzqpg
+  cloud-name: ddpatzqpg               # consider moving to env var as well
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: method
-    enabled: true
-  api-docs:
-    enabled: true
 
 server:
   port: 8080
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
-
 logging:
   level:
-    org.springframework: INFO
-    org.roomrental.group: DEBUG
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate: WARN
+    org.roomrental.group.RoomieHub: DEBUG   # your package
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
