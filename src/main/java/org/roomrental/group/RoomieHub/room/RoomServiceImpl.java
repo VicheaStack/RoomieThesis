@@ -1,6 +1,7 @@
 package org.roomrental.group.RoomieHub.room;
 
 import lombok.extern.slf4j.Slf4j;
+import org.roomrental.group.RoomieHub.booking.BookingRepository;
 import org.roomrental.group.RoomieHub.exception.AppException;
 import org.roomrental.group.RoomieHub.user.User;
 import org.roomrental.group.RoomieHub.user.UserRole;
@@ -19,11 +20,13 @@ public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     public RoomServiceImpl(RoomRepository roomRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository, BookingRepository bookingRepository) {
         this.roomRepository = roomRepository;
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     // RoomServiceImpl.java
@@ -89,9 +92,14 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     @Override
     public void deleteById(Long id) {
-        if(roomRepository.existsById(id)) {
+        if(!roomRepository.existsById(id)) {
             throw AppException.of("Room already booking: " + id);
         }
+
+        if (bookingRepository.existsActiveBookingByRoomId(id)) {
+            throw AppException.of("Room already booking: " + id);
+        }
+
         log.info("Room already delete");
         roomRepository.deleteById(id);
     }
