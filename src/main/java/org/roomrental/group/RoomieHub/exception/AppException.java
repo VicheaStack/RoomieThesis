@@ -3,7 +3,11 @@ package org.roomrental.group.RoomieHub.exception;
 import org.springframework.security.access.AccessDeniedException;
 import java.util.NoSuchElementException;
 
-public class AppException {
+public class AppException extends RuntimeException {
+
+    public AppException(String message) {
+        super(message);
+    }
 
     public static RuntimeException of(String message) {
         if (message == null) return new RuntimeException("Unexpected error");
@@ -11,10 +15,10 @@ public class AppException {
         String lower = message.toLowerCase();
 
         if (lower.contains("not found") || lower.contains("no such")) {
-            return new NoSuchElementException(message);
+            return new ResourceNotFoundException(message);
         }
         if (lower.contains("already") || lower.contains("duplicate")) {
-            return new IllegalStateException(message);
+            return new DuplicateResourceException(message);
         }
         if (lower.contains("only") && (lower.contains("owner") || lower.contains("renter") || lower.contains("admin"))) {
             return new AccessDeniedException(message);
@@ -25,4 +29,6 @@ public class AppException {
 
         return new RuntimeException(message);
     }
+
+
 }
