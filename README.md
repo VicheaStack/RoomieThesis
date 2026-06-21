@@ -1,139 +1,131 @@
+**✅ Here is the clean README content ready to copy and paste:**
+
 ```markdown
-# 🏠 RoomieHub – Rental Platform Backend
+# 🏠 RoomieHub - Rental Platform Backend
 
-RoomieHub is a full‑featured rental backend built with **Java 21 + Spring Boot 4.0.4**. It covers the entire lifecycle of a modern rental platform: user registration, room listings, bookings, reviews, favourites, messaging, photo management, admin tools, and OAuth2 login – all secured with JWT.
+![Java](https://img.shields.io/badge/Java-21-ED8B00?style=flat&logo=openjdk) 
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.4-6DB33F?style=flat&logo=spring) 
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-4169E1?style=flat&logo=postgresql)
 
-## ✨ Features at a Glance
+**RoomieHub** is a full-featured backend REST API for a modern room/apartment rental platform. Built with **Java 21 + Spring Boot 4**, it handles the complete rental lifecycle — from user management and room listings to bookings, reviews, real-time messaging, and admin tools.
 
-| Domain           | Endpoints | Description |
-|------------------|-----------|-------------|
-| Users            | 6         | Tenant/Owner registration, CRUD, role‑based access |
-| Rooms            | 5         | Full CRUD with pagination, owner‑only creation |
-| Bookings         | 5         | Auto‑pricing, date validation, renter‑only booking |
-| Reviews          | 5         | One review per booking, rating system |
-| Favorites        | 7         | Add, remove, check, list by renter, list all |
-| Messages         | 3         | Send, get messages, mark as read |
-| Photos           | 3         | CRUD for photo metadata |
-| CDN Upload       | 1         | Cloudinary image upload |
-| Amenities        | 5         | CRUD for room amenities |
-| Owner Profile    | 6         | Create, rate, update, delete |
-| Notifications    | 2         | Create & delete notifications |
-| System Settings  | 6         | Key‑value config with typed getters |
-| Admin Profile    | 5         | Admin profile creation, listing, update, deletion |
-| Audit Log        | 5         | Action logging with JSON diff storage |
+This project was developed as my **thesis** and is my main **portfolio project** to demonstrate strong backend development skills.
 
-All CRUD operations include **pagination**, **role‑based access control**, and clean **DTO mapping**.
+## ✨ Key Features
+
+- User Management (Registration, JWT + Google OAuth2, roles: RENTER/OWNER/ADMIN)
+- Room Listings with pagination, search & filtering
+- Booking System with date validation and availability checks
+- Reviews & Ratings (one review per booking)
+- Favorites, Real-time Messaging (WebSocket + STOMP)
+- Cloudinary CDN for photo uploads
+- Audit Logging with JSON diff tracking
+- System Settings, Amenities, Owner Profiles
+- Role-based Access Control
+
+**Total API Endpoints**: **65+**
 
 ## 🧱 Architecture
 
-```
-Controller  →  DTO (record / class)
-     ↓
-Service  →  Business logic, role checks, calculations
-     ↓
-Repository (Spring Data JPA)  →  PostgreSQL
-```
-
-- Controllers **never** return entities – they always map to response DTOs.
-- Services receive IDs and fetch relationships themselves to avoid lazy‑loading issues.
-- MapStruct handles entity ↔ DTO conversion.
-- The application uses `open‑in‑view: true` during development to simplify transaction handling.
+- Clean Layered Architecture (Controller → Service → Repository)
+- DTO pattern only (Entities never exposed to controllers)
+- MapStruct for object mapping
+- Proper relationship handling to avoid N+1 queries
+- Modular and maintainable code structure
 
 ## 🔐 Security
 
-- **Stateless JWT** filter for all API calls.
-- **OAuth2 login** (Google) with automatic local user creation and JWT generation upon success.
-- **BCrypt** password encoding.
-- **Role hierarchy**: `RENTER`, `OWNER`, `ADMIN`.
-- Swagger endpoints are public; all other endpoints require authentication (except user registration).
-
-Core security files:
-- `SecurityConfig.java` – the rulebook
-- `JwtUtil.java` – token creation/validation
-- `JwtAuthenticationFilter.java` – stateless authentication filter
-- `CustomOAuth2UserService.java` – OAuth2 user loading
-- `OAuth2SuccessHandler.java` – JWT issuance after social login
+- JWT Authentication
+- OAuth2 Google Login
+- BCrypt password encoding
+- Role-based authorization with Spring Security
 
 ## ⚙️ Tech Stack
 
-| Category          | Technology                         |
-|-------------------|------------------------------------|
-| Language          | Java 21                            |
-| Framework         | Spring Boot 4.0.4, Spring Security 7.x |
-| Database          | PostgreSQL                         |
-| ORM               | Hibernate / JPA                    |
-| Object Mapping    | MapStruct                          |
-| Authentication    | JWT (stateless) + OAuth2 (Google)  |
-| File Storage      | Cloudinary CDN                     |
-| Real‑time         | WebSocket (STOMP)                  |
-| Documentation     | Swagger / OpenAPI (SpringDoc)      |
-| Build Tool        | Maven                              |
+| Category           | Technology                              |
+|--------------------|-----------------------------------------|
+| Language           | Java 21                                 |
+| Framework          | Spring Boot 4.0.4                       |
+| Security           | Spring Security + JWT + OAuth2          |
+| Database           | PostgreSQL + Flyway                     |
+| ORM                | JPA / Hibernate                         |
+| Mapping            | MapStruct + Lombok                      |
+| Image Storage      | Cloudinary                              |
+| Real-time          | WebSocket (STOMP)                       |
+| Documentation      | SpringDoc OpenAPI / Swagger             |
+| Containerization   | Docker + Docker Compose                 |
+| Build Tool         | Maven                                   |
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Java 21
-- PostgreSQL (running on `localhost:5432`)
-- Maven
-- (Optional) Redis
-
-### 1. Clone the repository
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/RoomieHub.git
-cd RoomieHub
-git checkout feature/complete-roomiehub-api
+git clone https://github.com/VicheaStack/RoomieThesis.git
+cd RoomieThesis
 ```
 
-### 2. Configure environment variables
+### 2. Configure Environment Variables
+Set the following variables (recommended to use `application-dev.yml`):
+
 ```env
-DB_URL=jdbc:postgresql://localhost:5432/RoomieHub
-DB_USERNAME=your_db_user
-DB_PASSWORD=your_db_password
-JWT_SECRET=<base64-encoded 256-bit secret>
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-Generate a JWT secret: `openssl rand -base64 32`
+DB_URL=jdbc:postgresql://localhost:5432/roomiehub
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 
-### 3. Run the application
+JWT_SECRET=your_very_strong_secret_here   # Generate: openssl rand -base64 32
+
+# Google OAuth2 (Optional)
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+```
+
+### 3. Run the Application
 ```bash
 mvn spring-boot:run
 ```
-The server starts on `http://localhost:8088`. Swagger UI is at `/swagger-ui.html`.
 
-### 4. Test data (optional)
-SQL scripts for demo users, rooms, and bookings can be provided. The database structure is maintained automatically with `ddl-auto: update`.
+Application will start at **`http://localhost:8080`**
 
-## 🧪 Testing
+Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-- **32+ JPA/Hibernate bugs** fixed during development (null constraints, lazy initialization, ambiguous mappings, DTO alignment).
-- Over **60 endpoints** tested manually with Postman.
-- Pagination, role enforcement, date validation, and duplicate checks all verified.
-- Audit Log, Amenities, System Settings, and Cloudinary upload all working.
+### Docker
+```bash
+docker-compose up --build
+```
 
-## 🗺️ Future Roadmap
+## 🧪 Development & Testing
 
-- ✅ OAuth2 Google login
-- ⬜ Email alerts (booking confirmation, etc.)
-- ⬜ Moderation endpoints for Admin
-- ⬜ Integration tests (JUnit + MockMvc)
-- ⬜ Docker Compose for one‑command startup
-- ⬜ Package security as a reusable Spring Boot starter
-- ⬜ Frontend (React / Vue) integration
+- Fixed **32+ JPA/Hibernate issues** during development
+- Over 60 endpoints tested with Postman
+- Basic Unit Tests (JUnit + Mockito)
+- Audit logging for major operations
 
-## 🤝 Contributing
+## 🗺️ Future Improvements
 
-This project is a personal learning and portfolio piece. If you have ideas or want to contribute, feel free to open an issue or pull request.
+- Complete Integration Tests
+- Email notifications
+- Rate limiting
+- CI/CD with GitHub Actions
+- React/Vue frontend integration
 
 ## 📄 License
-
-This project is for educational and portfolio purposes. All rights reserved.
+GPL-3.0
 
 ---
 
-Built with ❤️ and far too much coffee over a few intense days of debugging.  
-*If your back hurts after reading this, take a break – the code will wait.*
+**Built with ❤️ by Leng Chan Vichea**
 ```
+
+---
+
+**How to use:**
+1. Go to your repository → `README.md`
+2. Replace all the old content with the text above
+3. Commit and push
+
+Would you like any modifications (add screenshots section, make it shorter, change anything, etc.)? Just tell me!
