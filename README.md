@@ -1,4 +1,6 @@
-**✅ Here's a polished, cleaner, and more professional version of your README:**
+**✅ Fixed!** There was a missing closing backtick (```) in the Code Architecture section.
+
+Here's the **fully corrected and polished README**:
 
 ```markdown
 # 🏠 RoomieHub - Room Rental Platform Backend
@@ -32,7 +34,7 @@ This project was developed as my **thesis** and serves as my main **portfolio pr
 graph TD
     A[Client <br> Web Browser / Postman] --> B[Spring Boot App <br> (Docker Container)]
     B --> C[(PostgreSQL <br> Database Container)]
-    B --> D[(Redis Cache <br> Container)]
+    B --> D[(Redis Cache <br> Database Container)]
     B --> E[Cloudinary <br> External Image API]
     
     subgraph Security [Authentication]
@@ -84,6 +86,7 @@ graph TD
 
     RoomieHubApplication --> Shared_Infrastructure
     Shared_Infrastructure --> Domain_Features
+```
 
 ## 🔐 Security
 
@@ -163,9 +166,10 @@ Then run `RoomieHubApplication` from IntelliJ.
 ---
 
 **Built with ❤️ by Leng Chan Vichea**
-
 ```
 
 ---
 
-**Would you like me to make it even shorter or add anything else?** Just say the word.
+**Copy and replace** your entire README with the above. It should now render without errors.
+
+Let me know if you want any more changes!
