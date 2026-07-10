@@ -160,6 +160,7 @@ docker-compose up -d postgres redis
 ## 📄 License
 GPL-3.0
 
+PostMan Collection
 https://vichea-8711.postman.co/workspace/JunitTest~fa0eff7b-98cc-47ea-a27f-39e9d538cf8e/collection/42535130-28189d14-70c6-4d67-90b9-2c684aee6de9?action=share&creator=42535130
 
 ---
