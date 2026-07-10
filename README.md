@@ -167,9 +167,3 @@ Then run `RoomieHubApplication` from IntelliJ.
 
 **Built with ❤️ by Leng Chan Vichea**
 ```
-
----
-
-**Copy and replace** your entire README with the above. It should now render without errors.
-
-Let me know if you want any more changes!
