@@ -55,19 +55,35 @@ graph TD
 ```mermaid
 graph TD
     subgraph Domain_Features [Business Domain Features]
-        A[adminProfile] B[amenity] C[booking] D[cdn] E[favorite]
-        F[message] G[notification] H[ownerProfile] I[payment]
-        J[photos] K[review] L[room] M[user] N[auth]
+        adminProfile
+        amenity
+        booking
+        cdn
+        favorite
+        message
+        notification
+        ownerProfile
+        payment
+        photos
+        review
+        room
+        user
+        auth
     end
+
     subgraph Shared_Infrastructure [Shared Infrastructure]
-        O[config] P[exception] Q[auditLog] R[common]
+        config
+        exception
+        auditLog
+        common
     end
+
     subgraph Entry_Point [Application Entry]
-        S[RoomieHubApplication]
+        RoomieHubApplication
     end
-    S --> Shared_Infrastructure
+
+    RoomieHubApplication --> Shared_Infrastructure
     Shared_Infrastructure --> Domain_Features
-```
 
 ## 🔐 Security
 
