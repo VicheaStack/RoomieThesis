@@ -160,8 +160,14 @@ docker-compose up -d postgres redis
 ## 📄 License
 GPL-3.0
 
-PostMan Collection
-https://vichea-8711.postman.co/workspace/JunitTest~fa0eff7b-98cc-47ea-a27f-39e9d538cf8e/collection/42535130-28189d14-70c6-4d67-90b9-2c684aee6de9?action=share&creator=42535130
+## PostMan Collection
+
+-https://vichea-8711.postman.co/workspace/JunitTest~fa0eff7b-98cc-47ea-a27f-39e9d538cf8e/collection/42535130-28189d14-70c6-4d67-90b9-2c684aee6de9?action=share&creator=42535130
+
+## Database schema Design 
+
+<img width="2097" height="2364" alt="roomrentingServiceDB" src="https://github.com/user-attachments/assets/da7fad2a-721d-4dcc-b81e-1aa079bcd894" />
+
 
 ---
 
