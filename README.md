@@ -1,15 +1,14 @@
-**✅ Here is the clean README content ready to copy and paste:**
-
 ```markdown
-# 🏠 RoomieHub - Rental Platform Backend
+# 🏠 RoomieHub - Thesis Rental Platform Backend
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?style=flat&logo=openjdk) 
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.4-6DB33F?style=flat&logo=spring) 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-4169E1?style=flat&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker)
 
 **RoomieHub** is a full-featured backend REST API for a modern room/apartment rental platform. Built with **Java 21 + Spring Boot 4**, it handles the complete rental lifecycle — from user management and room listings to bookings, reviews, real-time messaging, and admin tools.
 
-This project was developed as my **thesis** and is my main **portfolio project** to demonstrate strong backend development skills.
+This project was developed as my **thesis** and is my main **portfolio project** to demonstrate strong backend development and system design skills.
 
 ## ✨ Key Features
 
@@ -25,13 +24,67 @@ This project was developed as my **thesis** and is my main **portfolio project**
 
 **Total API Endpoints**: **65+**
 
-## 🧱 Architecture
+## 📊 System Architecture
 
-- Clean Layered Architecture (Controller → Service → Repository)
-- DTO pattern only (Entities never exposed to controllers)
-- MapStruct for object mapping
-- Proper relationship handling to avoid N+1 queries
-- Modular and maintainable code structure
+```mermaid
+graph TD
+    A[Client <br> Web Browser / Postman] --> B[Spring Boot App <br> (Docker Container)]
+    B --> C[(PostgreSQL <br> Database Container)]
+    B --> D[(Redis Cache <br> Container)]
+    B --> E[Cloudinary <br> External Image API]
+    
+    subgraph Security [Authentication]
+        F[JWT Token Filter]
+        G[Google OAuth 2.0]
+    end
+    
+    B --- F
+    B --- G
+
+    subgraph Docker_Network [Isolated Docker Network]
+        B
+        C
+        D
+    end
+    
+    style Docker_Network fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+## 📂 Project Code Architecture (Package-by-Feature)
+
+```mermaid
+graph TD
+    subgraph Domain_Features [Business Domain Features]
+        A[adminProfile]
+        B[amenity]
+        C[booking]
+        D[cdn]
+        E[favorite]
+        F[message]
+        G[notification]
+        H[ownerProfile]
+        I[payment]
+        J[photos]
+        K[review]
+        L[room]
+        M[user]
+        N[auth]
+    end
+
+    subgraph Shared_Infrastructure [Shared Infrastructure]
+        O[config]
+        P[exception]
+        Q[auditLog]
+        R[common]
+    end
+
+    subgraph Entry_Point [Application Entry]
+        S[RoomieHubApplication]
+    end
+
+    S --> Shared_Infrastructure
+    Shared_Infrastructure --> Domain_Features
+```
 
 ## 🔐 Security
 
@@ -64,46 +117,37 @@ git clone https://github.com/VicheaStack/RoomieThesis.git
 cd RoomieThesis
 ```
 
-### 2. Configure Environment Variables
-Set the following variables (recommended to use `application-dev.yml`):
-
-```env
-DB_URL=jdbc:postgresql://localhost:5432/roomiehub
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-
-JWT_SECRET=your_very_strong_secret_here   # Generate: openssl rand -base64 32
-
-# Google OAuth2 (Optional)
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=...
-CLOUDINARY_API_KEY=...
-CLOUDINARY_API_SECRET=...
-```
-
-### 3. Run the Application
+### 2. Environment Configuration (Secure Approach)
+To run the app, you need a `.env` file. Copy the example template and fill in your own values:
 ```bash
-mvn spring-boot:run
+cp docker.env.example docker.env
 ```
+Edit `docker.env` and insert your local credentials, API keys, and secrets (see the `docker.env.example` file for required keys).
 
-Application will start at **`http://localhost:8080`**
+> ⚠️ **Note for security:** The `docker.env` and `.env` files are included in `.gitignore`. Your secrets will **never** be pushed to GitHub.
 
-Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
-### Docker
+### 3A. Run with Docker (Containerized)
+Spin up the entire stack (App, Postgres, Redis) using Docker Compose:
 ```bash
 docker-compose up --build
 ```
+Application will start at `http://localhost:8080`. Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+### 3B. Run Natively (For Rapid Development)
+If you want to debug code in IntelliJ with hot-reload:
+1. Start only the databases via Docker:
+```bash
+docker-compose up -d postgres redis
+```
+2. Run `RoomieHubApplication` via IntelliJ. Ensure your local environment uses `DB_URL=jdbc:postgresql://localhost:5432/roomiehub` (or set your active Spring profile to `local`).
 
 ## 🧪 Development & Testing
 
-- Fixed **32+ JPA/Hibernate issues** during development
-- Over 60 endpoints tested with Postman
-- Basic Unit Tests (JUnit + Mockito)
-- Audit logging for major operations
+- **Hot-Reload workflow:** Native IntelliJ runs connect to Dockerized Postgres/Redis in seconds.
+- Fixed **32+ JPA/Hibernate issues** during development.
+- Over 60 endpoints tested with Postman.
+- Basic Unit Tests (JUnit + Mockito).
+- Audit logging for major operations.
 
 ## 🗺️ Future Improvements
 
@@ -120,12 +164,3 @@ GPL-3.0
 
 **Built with ❤️ by Leng Chan Vichea**
 ```
-
----
-
-**How to use:**
-1. Go to your repository → `README.md`
-2. Replace all the old content with the text above
-3. Commit and push
-
-Would you like any modifications (add screenshots section, make it shorter, change anything, etc.)? Just tell me!
