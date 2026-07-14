@@ -3,7 +3,7 @@ spring:
     name: roomiehub
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://postgres:5432/RoomieHub}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/RoomieHub}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:newpassword}
     driver-class-name: org.postgresql.Driver
@@ -58,10 +58,17 @@ spring:
         provider:
           google:
             issuer-uri: https://accounts.google.com
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/master
+
   web:
     error:
       include-binding-errors: always
       include-message: always
+  docker:
+    compose:
+      enabled: false
 
 jwt:
   secret: ${JWT_SECRET:dGhpcyBpcyBhIHNlY3JldCBrZXkgZm9yIGp3dCB0b2tlbnM=}
@@ -73,7 +80,7 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET}
 
 server:
-  port: 8080
+  port: 8081
 
 logging:
   level:
