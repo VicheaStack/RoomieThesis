@@ -137,7 +137,7 @@
 			<artifactId>spring-boot-starter-flyway</artifactId>
 		</dependency>
 
-		<!-- Environment variables (.env) -->
+		<!-- Environment variables (Docker.env) -->
 		<dependency>
 			<groupId>me.paulschwarz</groupId>
 			<artifactId>spring-dotenv</artifactId>

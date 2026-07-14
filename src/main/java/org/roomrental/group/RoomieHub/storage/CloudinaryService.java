@@ -1,4 +1,4 @@
-package org.roomrental.group.RoomieHub.cdn;
+package org.roomrental.group.RoomieHub.storage;
 
 import com.cloudinary.Cloudinary;
 import org.roomrental.group.RoomieHub.exception.AppException;

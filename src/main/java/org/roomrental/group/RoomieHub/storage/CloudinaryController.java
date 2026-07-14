@@ -1,4 +1,4 @@
-package org.roomrental.group.RoomieHub.cdn;
+package org.roomrental.group.RoomieHub.storage;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

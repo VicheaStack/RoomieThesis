@@ -1,4 +1,4 @@
-package org.roomrental.group.RoomieHub.LoginPage;
+package org.roomrental.group.RoomieHub.auth;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

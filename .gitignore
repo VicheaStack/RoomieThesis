@@ -166,6 +166,7 @@ HELP.md# =========================
        # Environment Variables (IMPORTANT 🔥)
        # =========================
        .env
+       docker.env
        *.env
        src/main/resources/.env
 
