@@ -18,14 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   //  private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    //private final CustomOAuth2UserService customOAuth2UserService;
+    //private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
-                          OAuth2SuccessHandler oAuth2SuccessHandler) {
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
-    }
 
     // ✅ Required bean for stateless OAuth2
     @Bean
@@ -92,17 +87,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/photos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/photos/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .authorizationEndpoint(auth -> auth
-                                .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                        )
-                        .redirectionEndpoint(redir -> redir
-                                .baseUri("/login/oauth2/code/*")
-                        )
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler)
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))

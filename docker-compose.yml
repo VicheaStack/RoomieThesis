@@ -33,6 +33,20 @@ services:
       timeout: 3s
       retries: 5
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.0
+    container_name: roomiehub-keycloak
+    restart: unless-stopped
+    command:
+      - start-dev
+    ports:
+      - "8080:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    networks:
+      - roomiehub-network
+
   app:
     image: vicheadev/roomiehub-app:latest   # ← use your pushed image
     restart: unless-stopped

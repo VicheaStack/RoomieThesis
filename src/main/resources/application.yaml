@@ -70,10 +70,6 @@ spring:
     compose:
       enabled: false
 
-jwt:
-  secret: ${JWT_SECRET:dGhpcyBpcyBhIHNlY3JldCBrZXkgZm9yIGp3dCB0b2tlbnM=}
-  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
-
 cloudinary:
   cloud-name: ddpatzqpg               # consider moving to env var as well
   api-key: ${CLOUDINARY_API_KEY}
